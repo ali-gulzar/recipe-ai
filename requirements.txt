@@ -1,0 +1,5 @@
+fastapi==0.93.0
+mangum==0.17.0
+python-multipart==0.0.6
+black==23.1.0
+isort==5.12.0

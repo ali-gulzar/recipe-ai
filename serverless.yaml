@@ -1,0 +1,41 @@
+service: recipe-ai
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  stage: ${opt:stage}
+  timeout: 5
+  environment:
+    STAGE: ${opt:stage}
+    ENVIRONMENT: ${upper(${opt:stage})}
+
+custom:
+  serverless-offline:
+    noPrependStageInUrl: true
+  pythonRequirements:
+    dockerizePip: true
+
+functions:
+  app:
+    handler: main.handler
+    url: true
+    events:
+      - http:
+          method: ANY
+          path: /{proxy+}
+
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
+  - serverless-plugin-utils
+
+package:
+  individually: true
+  patterns:
+    - "!node_modules/**"
+    - "!env/**"
+    - "!package.json"
+    - "!package-lock.json"
+    - "!requirements.txt"
+    - "!.serverless/**"
