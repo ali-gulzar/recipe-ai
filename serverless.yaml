@@ -11,6 +11,8 @@ provider:
     STAGE: ${opt:stage}
     ENVIRONMENT: ${upper(${opt:stage})}
     PERSONAL_ACCESS_TOKEN: ${env:PERSONAL_ACCESS_TOKEN}
+    EDAMAM_API_URL: https://api.edamam.com/api/recipes/v2
+    EDAMAM_APP_KEY: ${env:EDAMAM_APP_KEY}
   iam:
     role: ${env:IAM_ROLE_ARN}
 

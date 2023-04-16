@@ -8,7 +8,7 @@ ENVIRONMENT = os.environ["ENVIRONMENT"]
 
 def get_parameter(parameter: str) -> str:
     if OFFLINE:
-        return os.environ.get(parameter)
+        return os.environ[parameter]
 
     client = boto3.client("ssm")
     value = client.get_parameter(

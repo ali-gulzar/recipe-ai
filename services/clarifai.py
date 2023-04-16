@@ -3,7 +3,6 @@ from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
 
 from services.ssm_store import get_parameter
-import models.clarifai as clarifai_model 
 
 PERSONAL_ACCESS_TOKEN = get_parameter("PERSONAL_ACCESS_TOKEN")
 USER_ID = "aligulzar"
@@ -12,7 +11,7 @@ MODEL_ID = "food-item-recognition"
 MODEL_VERSION_ID = "1d5fd481e0cf4826aa72ec3ff049e044"
 
 
-def infer_ingredient(image: clarifai_model.Image):
+def infer_ingredient(image_url: str):
     stub = service_pb2_grpc.V2Stub(ClarifaiChannel.get_grpc_channel())
     post_model_outputs_response = stub.PostModelOutputs(
         service_pb2.PostModelOutputsRequest(
@@ -20,7 +19,7 @@ def infer_ingredient(image: clarifai_model.Image):
             model_id=MODEL_ID,
             inputs=[
                 resources_pb2.Input(
-                    data=resources_pb2.Data(image=resources_pb2.Image(url=image.url))
+                    data=resources_pb2.Data(image=resources_pb2.Image(url=image_url))
                 )
             ],
         ),

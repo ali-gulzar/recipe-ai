@@ -2,8 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
-from controllers.clarifai import router as clarifai_router
-
+from controllers.recipe import router as recipe_router
 
 app = FastAPI(title="Recipe AI")
 app.add_middleware(
@@ -13,6 +12,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(clarifai_router, prefix="/clarifai", tags=["clarifai"])
+app.include_router(recipe_router, prefix="/recipe", tags=["recipe"])
 
 handler = Mangum(app)
