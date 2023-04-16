@@ -1,0 +1,56 @@
+frameworkVersion: "3"
+service: recipe-ai
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: eu-west-3
+  stage: ${opt:stage}
+  timeout: 5
+  environment:
+    STAGE: ${opt:stage}
+    ENVIRONMENT: ${upper(${opt:stage})}
+    PERSONAL_ACCESS_TOKEN: ${env:PERSONAL_ACCESS_TOKEN}
+  iam:
+    role: ${env:IAM_ROLE_ARN}
+
+custom:
+  serverless-offline:
+    noPrependStageInUrl: true
+  pythonRequirements:
+    dockerizePip: true
+  s3:
+    host: localhost
+    directory: /tmp
+
+functions:
+  app:
+    handler: main.handler
+    url: true
+    events:
+      - http:
+          method: ANY
+          path: /{proxy+}
+
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
+  - serverless-plugin-utils
+  - serverless-s3-local
+
+package:
+  individually: true
+  patterns:
+    - "!node_modules/**"
+    - "!.venv/**"
+    - "!package.json"
+    - "!package-lock.json"
+    - "!requirements.txt"
+    - "!.serverless/**"
+
+resources:
+  Resources:
+    FoodImagesBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: food-images-recipe-ai

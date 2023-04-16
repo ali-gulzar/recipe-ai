@@ -1,0 +1,14 @@
+{
+  "name": "recipe-ai",
+  "version": "1.0.0",
+  "description": "Recipe AI serverless application",
+  "author": "Muhammad Ali Gulzar",
+  "dependencies": {
+    "serverless-offline": "^12.0.4",
+    "serverless-plugin-utils": "^0.2.0",
+    "serverless-python-requirements": "^6.0.0"
+  },
+  "devDependencies": {
+    "serverless-s3-local": "^0.7.1"
+  }
+}
