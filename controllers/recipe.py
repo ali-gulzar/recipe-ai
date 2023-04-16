@@ -17,7 +17,7 @@ def upload_image(image: UploadFile):
 @router.get("/infer_ingredient", response_model=str)
 def infer_ingredient(image_url: str):
     ingredient = clarifai_service.infer_ingredient(image_url=image_url)
-    return f"{ingredient}-hi"
+    return ingredient
 
 
 @router.get("/recipes", response_model=RecipeResponse)
