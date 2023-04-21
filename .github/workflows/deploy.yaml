@@ -5,7 +5,7 @@ on:
 
 concurrency:
   group: environment=${{ github.ref }}
-  cance;-in-progress: false
+  cancel-in-progress: false
   max: 1
 
 jobs:
