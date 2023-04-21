@@ -6,7 +6,6 @@ on:
 concurrency:
   group: environment=${{ github.ref }}
   cancel-in-progress: false
-  max: 1
 
 jobs:
   backend:
