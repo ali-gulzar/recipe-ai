@@ -1,3 +1,4 @@
+import json
 import os
 
 import boto3
@@ -31,3 +32,19 @@ def upload_image(image: UploadFile):
 
     s3_image_url = f"https://food-images-recipe-ai.s3.amazonaws.com/{image.filename}"
     return s3_image_url
+
+
+def get_animation(animation_name: str):
+    s3_client = get_s3_client(override_offline=True)
+    try:
+        response = s3_client.get_object(
+            Bucket="recipe-ai-animations", Key=f"{animation_name}.json"
+        )
+        json_data = response["Body"].read().decode("utf-8")
+
+        # Parse the JSON data
+        animation_json = json.loads(json_data)
+        return animation_json
+
+    except Exception as e:
+        raise HTTPException(detail=e, status_code=status.HTTP_400_BAD_REQUEST)
