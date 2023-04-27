@@ -60,11 +60,29 @@ def execute_db(
         raise HTTPException(detail=str(e), status_code=status.HTTP_400_BAD_REQUEST)
 
 
-def create_user(user: user_model.CreateUser, db: connection):
+def create_user(user: user_model.CreateUser, db: connection) -> user_model.User:
     data = execute_db(
         db=db,
         sql_statment="INSERT INTO users (email, password) VALUES (%s, %s) RETURNING id, email",
         action=database_model.DATBASE_ACTIONS.fetch_one,
         paramters=(user.email, Hash.bcrypt(user.password)),
     )
-    return data
+    id = data[0]
+    email = data[1]
+    return user_model.User(id=id, email=email)
+
+
+def get_user_by_email(user_email: str, db: connection) -> user_model.User:
+    data = execute_db(
+        db=db,
+        sql_statment="SELECT * FROM users WHERE email = %s",
+        action=database_model.DATBASE_ACTIONS.fetch_one,
+        paramters=(user_email,),
+    )
+    if data:
+        id = data[0]
+        email = data[1]
+        password = data[2]
+        return user_model.User(id=id, email=email, password=password)
+
+    raise HTTPException(detail=f"No user with email {user_email} exists!")

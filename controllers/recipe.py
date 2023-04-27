@@ -1,11 +1,12 @@
-from fastapi import APIRouter, UploadFile
+from fastapi import APIRouter, Depends, UploadFile
 
+import services.authentication as authentication_service
 import services.clarifai as clarifai_service
 import services.edamam as edamam_service
 import services.s3 as s3_service
 from models.recipe import RecipeResponse
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(authentication_service.get_current_user)])
 
 
 @router.post("/upload_image", response_model=str)

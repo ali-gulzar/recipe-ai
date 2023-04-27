@@ -25,10 +25,9 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         raise credentials_exception
 
     # get user details from database using the payload
-    user = None
-    if user is None:
+    if payload is None:
         raise credentials_exception
-    return user
+    return payload
 
 
 def create_access_token(data: dict):
