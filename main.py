@@ -4,6 +4,7 @@ from mangum import Mangum
 
 from controllers.animation import router as animation_router
 from controllers.recipe import router as recipe_router
+from controllers.user import router as user_router
 
 app = FastAPI(title="Recipe AI")
 app.add_middleware(
@@ -15,5 +16,6 @@ app.add_middleware(
 )
 app.include_router(recipe_router, prefix="/recipe", tags=["recipe"])
 app.include_router(animation_router, prefix="/animation", tags=["animation"])
+app.include_router(user_router, prefix="/user", tags=["user"])
 
 handler = Mangum(app)
