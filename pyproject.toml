@@ -1,2 +1,7 @@
 [tool.black]
+line-length = 88
 exclude = '(node_modules|venv)'
+binary-operator-spacing = "none"
+
+[tool.isort]
+profile = "black"

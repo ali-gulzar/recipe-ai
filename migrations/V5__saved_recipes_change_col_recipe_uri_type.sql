@@ -1,0 +1,1 @@
+ALTER TABLE saved_recipes ALTER COLUMN recipe_uri TYPE VARCHAR(255)

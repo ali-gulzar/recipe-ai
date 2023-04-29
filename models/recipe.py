@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -22,6 +23,7 @@ class Recipe(BaseModel):
     cuisineType: List[str]
     url: str
     totalTime: float
+    uri: str
 
 
 class RecipeResponse(BaseModel):

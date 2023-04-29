@@ -1,0 +1,6 @@
+CREATE TABLE saved_recipes (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    recipe_id INTEGER NOT NULL,
+    saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)

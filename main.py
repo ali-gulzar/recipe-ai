@@ -14,8 +14,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(recipe_router, prefix="/recipe", tags=["recipe"])
-app.include_router(animation_router, prefix="/animation", tags=["animation"])
-app.include_router(user_router, prefix="/user", tags=["user"])
+app.include_router(
+    recipe_router,
+    prefix="/recipe",
+    tags=["recipe"],
+)
+app.include_router(
+    animation_router,
+    prefix="/animation",
+    tags=["animation"],
+)
+app.include_router(
+    user_router,
+    prefix="/user",
+    tags=["user"],
+)
 
 handler = Mangum(app)

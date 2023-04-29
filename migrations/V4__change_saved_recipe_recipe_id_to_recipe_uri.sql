@@ -1,0 +1,1 @@
+ALTER TABLE saved_recipes RENAME COLUMN recipe_id TO recipe_uri
