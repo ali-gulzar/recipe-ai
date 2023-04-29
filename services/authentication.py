@@ -17,6 +17,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 class Hash:
     def bcrypt(password: str):
         return pwd_context.hash(password)
@@ -39,7 +40,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     # get user details from database using the payload
     if payload is None:
         raise credentials_exception
-    return user_model.User(id=payload["id"],email=payload["email"])
+    return user_model.User(id=payload["id"], email=payload["email"])
 
 
 def create_access_token(data: dict):

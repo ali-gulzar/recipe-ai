@@ -58,3 +58,14 @@ def save_recipe(
     return database_service.save_recipe(
         user_id=current_user.id, recipe_uri=recipe_uri, db=db
     )
+
+
+@router.delete("/unsave/{recipe_uri}", response_model=bool)
+def unsave_recipe(
+    recipe_uri: str,
+    current_user: user_model.User = Depends(authentication_service.get_current_user),
+    db: connection = Depends(database_service.connect_db),
+):
+    return database_service.unsave_recipe(
+        user_id=current_user.id, recipe_uri=recipe_uri, db=db
+    )

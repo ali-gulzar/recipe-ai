@@ -2,14 +2,15 @@ from typing import List
 
 import psycopg2
 from fastapi import HTTPException, status
-import services.authentication as authentication_service
 from psycopg2.extensions import connection
 
 import models.database as database_model
 import models.user as user_model
+import services.authentication as authentication_service
 import services.ssm_store as ssm_store_service
 
 DATBASE_PASSWORD = ssm_store_service.get_parameter("DATABASE_PASSWORD")
+
 
 def connect_db() -> connection:
     try:
@@ -47,6 +48,9 @@ def execute_db(
             return cursor.fetchall()
         elif action == database_model.DATBASE_ACTIONS.fetch_one:
             return cursor.fetchone()
+        elif action == database_model.DATBASE_ACTIONS.delete:
+            return cursor.rowcount > 0
+
     except psycopg2.Error as e:
         raise HTTPException(detail=str(e), status_code=status.HTTP_400_BAD_REQUEST)
 
@@ -56,7 +60,7 @@ def create_user(user: user_model.CreateUser, db: connection) -> user_model.User:
         db=db,
         sql_statment="INSERT INTO users (email, password) VALUES (%s, %s) RETURNING id, email",
         action=database_model.DATBASE_ACTIONS.fetch_one,
-        paramters=(user.email,authentication_service.Hash.bcrypt(user.password))
+        paramters=(user.email, authentication_service.Hash.bcrypt(user.password)),
     )
     id = data[0]
     email = data[1]
@@ -95,6 +99,16 @@ def save_recipe(
     )
 
 
+def unsave_recipe(user_id: int, recipe_uri: str, db: connection) -> bool:
+    data = execute_db(
+        db=db,
+        sql_statment="DELETE FROM saved_recipes WHERE user_id = %s and recipe_uri = %s",
+        action=database_model.DATBASE_ACTIONS.delete,
+        paramters=(user_id, recipe_uri),
+    )
+    return data
+
+
 def get_saved_recipes(user_id: int, db: connection) -> List[user_model.SavedRecipe]:
     data = execute_db(
         db=db,
@@ -102,6 +116,12 @@ def get_saved_recipes(user_id: int, db: connection) -> List[user_model.SavedReci
         action=database_model.DATBASE_ACTIONS.fetch_all,
         paramters=(user_id,),
     )
-    return [user_model.SavedRecipe(id=saved_recipe[0],user_id=saved_recipe[1],recipe_uri=saved_recipe[2],saved_at=saved_recipe[3])
+    return [
+        user_model.SavedRecipe(
+            id=saved_recipe[0],
+            user_id=saved_recipe[1],
+            recipe_uri=saved_recipe[2],
+            saved_at=saved_recipe[3],
+        )
         for saved_recipe in data
     ]
