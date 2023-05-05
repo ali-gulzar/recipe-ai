@@ -25,5 +25,9 @@ class LoggedInUser(Common):
 class SavedRecipe(BaseModel):
     id: int
     user_id: int
-    recipe_uri: str
+    recipe_id: str
     saved_at: datetime
+
+
+class SaveUnsaveRecipe(BaseModel):
+    recipe_id: str

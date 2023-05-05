@@ -32,8 +32,7 @@ def search_recipes(ingredient: str) -> recipe_model.RecipeResponse:
     )
 
 
-def get_recipe(recipe_uri: str) -> recipe_model.Recipe:
-    recipe_id = recipe_uri.split("#recipe_")[1]
+def get_recipe(recipe_id: str) -> recipe_model.Recipe:
     response = requests.get(
         f"{EDAMAM_API_URL}/{recipe_id}",
         params={"type": "public", "app_id": "3600a17f", "app_key": APP_KEY},

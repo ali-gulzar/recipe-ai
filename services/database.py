@@ -83,28 +83,26 @@ def get_user_by_email(user_email: str, db: connection) -> user_model.User:
     raise HTTPException(detail=f"No user with email {user_email} exists!")
 
 
-def save_recipe(
-    user_id: int, recipe_uri: str, db: connection
-) -> user_model.SavedRecipe:
+def save_recipe(user_id: int, recipe_id: str, db: connection) -> user_model.SavedRecipe:
     data = execute_db(
         db=db,
-        sql_statment="INSERT INTO saved_recipes (user_id, recipe_uri) VALUES (%s, %s) RETURNING id, user_id, recipe_uri, saved_at",
+        sql_statment="INSERT INTO saved_recipes (user_id, recipe_id) VALUES (%s, %s) RETURNING id, user_id, recipe_id, saved_at",
         action=database_model.DATBASE_ACTIONS.fetch_one,
-        paramters=(user_id, recipe_uri),
+        paramters=(user_id, recipe_id),
     )
 
-    db_id, db_user_id, db_recipe_uri, db_saved_at = data
+    db_id, db_user_id, db_recipe_id, db_saved_at = data
     return user_model.SavedRecipe(
-        id=db_id, user_id=db_user_id, recipe_uri=db_recipe_uri, saved_at=db_saved_at
+        id=db_id, user_id=db_user_id, recipe_id=db_recipe_id, saved_at=db_saved_at
     )
 
 
-def unsave_recipe(user_id: int, recipe_uri: str, db: connection) -> bool:
+def unsave_recipe(user_id: int, recipe_id: str, db: connection) -> bool:
     data = execute_db(
         db=db,
-        sql_statment="DELETE FROM saved_recipes WHERE user_id = %s and recipe_uri = %s",
+        sql_statment="DELETE FROM saved_recipes WHERE user_id = %s and recipe_id = %s",
         action=database_model.DATBASE_ACTIONS.delete,
-        paramters=(user_id, recipe_uri),
+        paramters=(user_id, recipe_id),
     )
     return data
 
@@ -120,7 +118,7 @@ def get_saved_recipes(user_id: int, db: connection) -> List[user_model.SavedReci
         user_model.SavedRecipe(
             id=saved_recipe[0],
             user_id=saved_recipe[1],
-            recipe_uri=saved_recipe[2],
+            recipe_id=saved_recipe[2],
             saved_at=saved_recipe[3],
         )
         for saved_recipe in data

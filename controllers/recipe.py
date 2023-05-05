@@ -6,7 +6,7 @@ import services.clarifai as clarifai_service
 import services.edamam as edamam_service
 import services.s3 as s3_service
 
-router = APIRouter(dependencies=[Depends(authentication_service.get_current_user)])
+router = APIRouter()
 
 
 @router.post("/upload_image", response_model=str)
@@ -27,6 +27,10 @@ def get_recipes(ingredient: str):
     return recipes
 
 
-@router.get("/recipe", response_model=recipe_model.Recipe)
-def get_recipe(recipe_uri: str):
-    return edamam_service.get_recipe(recipe_uri=recipe_uri)
+@router.get(
+    "/recipe",
+    response_model=recipe_model.Recipe,
+    dependencies=[Depends(authentication_service.get_current_user)],
+)
+def get_recipe(recipe_id: str):
+    return edamam_service.get_recipe(recipe_id=recipe_id)
