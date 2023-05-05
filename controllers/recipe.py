@@ -28,7 +28,7 @@ def get_recipes(ingredient: str):
 
 
 @router.get(
-    "/recipe",
+    "/{recipe_id}",
     response_model=recipe_model.Recipe,
     dependencies=[Depends(authentication_service.get_current_user)],
 )
