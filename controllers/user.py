@@ -35,7 +35,7 @@ def login_user(
         )
 
     access_token = authentication_service.create_access_token(
-        data={"email": user.email, "id": user.id}
+        data={"email": user.email, "id": user.id, "name": user.name}
     )
 
     return user_model.UserToken(
