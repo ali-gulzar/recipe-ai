@@ -58,16 +58,21 @@ def execute_db(
 def create_user(user: user_model.CreateUser, db: connection) -> user_model.User:
     data = execute_db(
         db=db,
-        sql_statment="INSERT INTO users (email, password) VALUES (%s, %s) RETURNING id, email",
+        sql_statment="INSERT INTO users (email, password, name) VALUES (%s, %s, %s) RETURNING id, email, name",
         action=database_model.DATBASE_ACTIONS.fetch_one,
-        paramters=(user.email, authentication_service.Hash.bcrypt(user.password)),
+        paramters=(
+            user.email,
+            authentication_service.Hash.bcrypt(user.password),
+            user.name,
+        ),
     )
     id = data[0]
     email = data[1]
-    return user_model.User(id=id, email=email)
+    name = data[2]
+    return user_model.User(id=id, email=email, name=name)
 
 
-def get_user_by_email(user_email: str, db: connection) -> user_model.User:
+def get_user_by_email(user_email: str, db: connection) -> user_model.LoggedInUser:
     data = execute_db(
         db=db,
         sql_statment="SELECT * FROM users WHERE email = %s",
@@ -78,7 +83,8 @@ def get_user_by_email(user_email: str, db: connection) -> user_model.User:
         id = data[0]
         email = data[1]
         password = data[2]
-        return user_model.User(id=id, email=email, password=password)
+        name = data[3]
+        return user_model.LoggedInUser(id=id, email=email, password=password, name=name)
 
     raise HTTPException(detail=f"No user with email {user_email} exists!")
 

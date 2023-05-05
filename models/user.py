@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
 
 class Common(BaseModel):
+    name: str
     email: EmailStr
 
 
@@ -13,11 +13,14 @@ class CreateUser(Common):
 
 
 class User(Common):
-    id: Optional[str]
-    password: Optional[str]
+    id: str
 
 
-class LoggedInUser(Common):
+class LoggedInUser(CreateUser, User):
+    pass
+
+
+class UserToken(BaseModel):
     token_type: str
     access_token: str
 

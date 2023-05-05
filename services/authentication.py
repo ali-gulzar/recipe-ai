@@ -44,8 +44,5 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 def create_access_token(data: dict):
-    data_to_encode = data.copy()
-    data_to_encode.update({"exp": datetime.utcnow() + timedelta(minutes=30)})
-
-    encoded_jwt = jwt.encode(data_to_encode, OAUTH_SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(data, OAUTH_SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

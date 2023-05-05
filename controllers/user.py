@@ -20,12 +20,14 @@ def create_user(
     return database_service.create_user(user=user, db=db)
 
 
-@router.post("/login", response_model=user_model.LoggedInUser)
+@router.post("/login", response_model=user_model.UserToken)
 def login_user(
     request: OAuth2PasswordRequestForm = Depends(),
     db: connection = Depends(database_service.connect_db),
 ):
-    user: user_model.User = database_service.get_user_by_email(request.username, db=db)
+    user: user_model.LoggedInUser = database_service.get_user_by_email(
+        request.username, db=db
+    )
 
     if not authentication_service.Hash.verify(request.password, user.password):
         raise HTTPException(
@@ -36,7 +38,7 @@ def login_user(
         data={"email": user.email, "id": user.id}
     )
 
-    return user_model.LoggedInUser(
+    return user_model.UserToken(
         email=user.email, token_type="bearer", access_token=access_token
     )
 
