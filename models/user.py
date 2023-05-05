@@ -20,7 +20,7 @@ class LoggedInUser(CreateUser, User):
     pass
 
 
-class UserToken(BaseModel):
+class AuthenticatedUser(User):
     token_type: str
     access_token: str
 

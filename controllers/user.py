@@ -20,7 +20,7 @@ def create_user(
     return database_service.create_user(user=user, db=db)
 
 
-@router.post("/login", response_model=user_model.UserToken)
+@router.post("/login", response_model=user_model.AuthenticatedUser)
 def login_user(
     request: OAuth2PasswordRequestForm = Depends(),
     db: connection = Depends(database_service.connect_db),
@@ -38,8 +38,12 @@ def login_user(
         data={"email": user.email, "id": user.id, "name": user.name}
     )
 
-    return user_model.UserToken(
-        email=user.email, token_type="bearer", access_token=access_token
+    return user_model.AuthenticatedUser(
+        name=user.name,
+        email=user.email,
+        id=user.id,
+        token_type="bearer",
+        access_token=access_token,
     )
 
 

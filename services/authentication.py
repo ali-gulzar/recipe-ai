@@ -26,7 +26,7 @@ class Hash:
         return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(token: str = Depends(oauth2_scheme)) -> user_model.User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials.",
@@ -40,7 +40,9 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     # get user details from database using the payload
     if payload is None:
         raise credentials_exception
-    return user_model.User(id=payload["id"], email=payload["email"])
+    return user_model.User(
+        id=payload["id"], email=payload["email"], name=payload["name"]
+    )
 
 
 def create_access_token(data: dict):
