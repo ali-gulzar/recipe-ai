@@ -2,7 +2,6 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from psycopg2.extensions import connection
 from mysql.connector.connection_cext import CMySQLConnection
 
 import models.user as user_model
