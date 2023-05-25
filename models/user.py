@@ -12,6 +12,10 @@ class CreateUser(Common):
     password: str
 
 
+class CreatedUser(Common):
+    pass
+
+
 class User(Common):
     id: str
 
@@ -26,7 +30,6 @@ class AuthenticatedUser(User):
 
 
 class SavedRecipe(BaseModel):
-    id: int
     user_id: int
     recipe_id: str
     saved_at: datetime

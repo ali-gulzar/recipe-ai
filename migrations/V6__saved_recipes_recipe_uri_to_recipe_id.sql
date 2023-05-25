@@ -1,1 +1,0 @@
-ALTER TABLE saved_recipes RENAME COLUMN recipe_uri TO recipe_id 

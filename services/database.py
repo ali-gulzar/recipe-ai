@@ -1,26 +1,26 @@
 from typing import List
 
-import psycopg2
 from fastapi import HTTPException, status
-from psycopg2.extensions import connection
 
 import models.database as database_model
 import models.user as user_model
 import services.authentication as authentication_service
 import services.ssm_store as ssm_store_service
+from mysql.connector import connect, Error
+from mysql.connector.connection_cext import CMySQLConnection
 
 DATBASE_PASSWORD = ssm_store_service.get_parameter("DATABASE_PASSWORD")
 
+DATABASE_CONFIG = {
+    'user': "c8hlks8r77kan6pdoa8x",
+    'passwd': DATBASE_PASSWORD,
+    'db': 'recipe-ai',
+    'host': 'aws.connect.psdb.cloud'
+}
 
-def connect_db() -> connection:
+def connect_db() -> CMySQLConnection:
     try:
-        conn = psycopg2.connect(
-            dbname="recipe_ai",
-            user="recipe_ai",
-            password=f"{DATBASE_PASSWORD}",
-            host="recipe-ai.clixccayxbxi.eu-west-3.rds.amazonaws.com",
-            port="5432",
-        )
+        conn = connect(**DATABASE_CONFIG)
         return conn
     except Exception as e:
         raise HTTPException(
@@ -29,7 +29,7 @@ def connect_db() -> connection:
 
 
 def execute_db(
-    db: connection,
+    db: CMySQLConnection,
     sql_statment: str,
     action: database_model.DATBASE_ACTIONS,
     paramters: tuple = None,
@@ -42,37 +42,36 @@ def execute_db(
         else:
             cursor.execute(sql_statment)
 
-        db.commit()
-
-        if action == database_model.DATBASE_ACTIONS.fetch_all:
-            return cursor.fetchall()
+        if action == database_model.DATBASE_ACTIONS.insert:
+            db.commit()
+            return
+        elif action == database_model.DATBASE_ACTIONS.delete:
+            db.commit()
+            return cursor.rowcount > 0
         elif action == database_model.DATBASE_ACTIONS.fetch_one:
             return cursor.fetchone()
-        elif action == database_model.DATBASE_ACTIONS.delete:
-            return cursor.rowcount > 0
+        elif action == database_model.DATBASE_ACTIONS.fetch_all:
+            return cursor.fetchall()
 
-    except psycopg2.Error as e:
+    except Error as e:
         raise HTTPException(detail=str(e), status_code=status.HTTP_400_BAD_REQUEST)
 
 
-def create_user(user: user_model.CreateUser, db: connection) -> user_model.User:
-    data = execute_db(
+def create_user(user: user_model.CreateUser, db: CMySQLConnection) -> user_model.CreatedUser:
+    execute_db(
         db=db,
-        sql_statment="INSERT INTO users (email, password, name) VALUES (%s, %s, %s) RETURNING id, email, name",
-        action=database_model.DATBASE_ACTIONS.fetch_one,
+        sql_statment="INSERT INTO users (email, password, name) VALUES (%s, %s, %s)",
+        action=database_model.DATBASE_ACTIONS.insert,
         paramters=(
             user.email,
             authentication_service.Hash.bcrypt(user.password),
             user.name,
         ),
     )
-    id = data[0]
-    email = data[1]
-    name = data[2]
-    return user_model.User(id=id, email=email, name=name)
+    return user_model.CreatedUser(email=user.email, name=user.name)
 
 
-def get_user_by_email(user_email: str, db: connection) -> user_model.LoggedInUser:
+def get_user_by_email(user_email: str, db: CMySQLConnection) -> user_model.LoggedInUser:
     data = execute_db(
         db=db,
         sql_statment="SELECT * FROM users WHERE email = %s",
@@ -86,34 +85,29 @@ def get_user_by_email(user_email: str, db: connection) -> user_model.LoggedInUse
         name = data[3]
         return user_model.LoggedInUser(id=id, email=email, password=password, name=name)
 
-    raise HTTPException(detail=f"No user with email {user_email} exists!")
+    raise HTTPException(detail=f"No user with email {user_email} exists!", status_code=status.HTTP_404_NOT_FOUND)
 
 
-def save_recipe(user_id: int, recipe_id: str, db: connection) -> user_model.SavedRecipe:
-    data = execute_db(
+def save_recipe(user_id: int, recipe_id: str, db: CMySQLConnection):
+    execute_db(
         db=db,
-        sql_statment="INSERT INTO saved_recipes (user_id, recipe_id) VALUES (%s, %s) RETURNING id, user_id, recipe_id, saved_at",
-        action=database_model.DATBASE_ACTIONS.fetch_one,
+        sql_statment="INSERT INTO saved_recipes (user_id, recipe_id) VALUES (%s, %s)",
+        action=database_model.DATBASE_ACTIONS.insert,
         paramters=(user_id, recipe_id),
     )
 
-    db_id, db_user_id, db_recipe_id, db_saved_at = data
-    return user_model.SavedRecipe(
-        id=db_id, user_id=db_user_id, recipe_id=db_recipe_id, saved_at=db_saved_at
-    )
 
-
-def unsave_recipe(user_id: int, recipe_id: str, db: connection) -> bool:
-    data = execute_db(
+def unsave_recipe(user_id: int, recipe_id: str, db: CMySQLConnection) -> bool:
+    response = execute_db(
         db=db,
         sql_statment="DELETE FROM saved_recipes WHERE user_id = %s and recipe_id = %s",
         action=database_model.DATBASE_ACTIONS.delete,
         paramters=(user_id, recipe_id),
     )
-    return data
+    return response
 
 
-def get_saved_recipes(user_id: int, db: connection) -> List[user_model.SavedRecipe]:
+def get_saved_recipes(user_id: int, db: CMySQLConnection) -> List[user_model.SavedRecipe]:
     data = execute_db(
         db=db,
         sql_statment="SELECT * FROM saved_recipes WHERE user_id = %s",
@@ -122,10 +116,9 @@ def get_saved_recipes(user_id: int, db: connection) -> List[user_model.SavedReci
     )
     return [
         user_model.SavedRecipe(
-            id=saved_recipe[0],
-            user_id=saved_recipe[1],
-            recipe_id=saved_recipe[2],
-            saved_at=saved_recipe[3],
+            user_id=saved_recipe[0],
+            recipe_id=saved_recipe[1],
+            saved_at=saved_recipe[2],
         )
         for saved_recipe in data
     ]
