@@ -1,7 +1,6 @@
 import os
 
 import requests
-from fastapi import status
 
 import models.recipe as recipe_model
 from services.ssm_store import get_parameter

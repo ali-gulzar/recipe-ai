@@ -1,13 +1,13 @@
 from typing import List
 
 from fastapi import HTTPException, status
+from mysql.connector import Error, connect
+from mysql.connector.connection_cext import CMySQLConnection
 
 import models.database as database_model
 import models.user as user_model
 import services.authentication as authentication_service
 import services.ssm_store as ssm_store_service
-from mysql.connector import connect, Error
-from mysql.connector.connection_cext import CMySQLConnection
 
 DATBASE_PASSWORD = ssm_store_service.get_parameter("DATABASE_PASSWORD")
 
@@ -17,6 +17,7 @@ DATABASE_CONFIG = {
     'db': 'recipe-ai',
     'host': 'aws.connect.psdb.cloud'
 }
+
 
 def connect_db() -> CMySQLConnection:
     try:
