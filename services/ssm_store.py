@@ -16,5 +16,7 @@ def get_parameter(
     value = client.get_parameter(
         Name=f"/RECIPE_AI_{ENVIRONMENT}/{parameter}",
         WithDecryption=True,
-    )["Parameter"]["Value"]
+    )[
+        "Parameter"
+    ]["Value"]
     return value

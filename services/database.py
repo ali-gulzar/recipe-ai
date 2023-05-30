@@ -12,10 +12,10 @@ import services.ssm_store as ssm_store_service
 DATBASE_PASSWORD = ssm_store_service.get_parameter("DATABASE_PASSWORD")
 
 DATABASE_CONFIG = {
-    'user': "c8hlks8r77kan6pdoa8x",
-    'passwd': DATBASE_PASSWORD,
-    'db': 'recipe-ai',
-    'host': 'aws.connect.psdb.cloud'
+    "user": "c8hlks8r77kan6pdoa8x",
+    "passwd": DATBASE_PASSWORD,
+    "db": "recipe-ai",
+    "host": "aws.connect.psdb.cloud",
 }
 
 
@@ -24,9 +24,7 @@ def connect_db() -> CMySQLConnection:
         conn = connect(**DATABASE_CONFIG)
         return conn
     except Exception as e:
-        raise HTTPException(
-            detail=str(e), status_code=status.HTTP_424_FAILED_DEPENDENCY
-        )
+        raise HTTPException(detail=str(e), status_code=status.HTTP_424_FAILED_DEPENDENCY)
 
 
 def execute_db(

@@ -1,6 +1,7 @@
 from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
 from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
 from clarifai_grpc.grpc.api.status import status_code_pb2
+from fastapi import HTTPException, status
 
 from services.ssm_store import get_parameter
 
@@ -17,18 +18,14 @@ def infer_ingredient(image_url: str):
         service_pb2.PostModelOutputsRequest(
             user_app_id=resources_pb2.UserAppIDSet(user_id=USER_ID, app_id=APP_ID),
             model_id=MODEL_ID,
-            inputs=[
-                resources_pb2.Input(
-                    data=resources_pb2.Data(image=resources_pb2.Image(url=image_url))
-                )
-            ],
+            inputs=[resources_pb2.Input(data=resources_pb2.Data(image=resources_pb2.Image(url=image_url)))],
         ),
         metadata=(("authorization", "Key " + PERSONAL_ACCESS_TOKEN),),
     )
     if post_model_outputs_response.status.code != status_code_pb2.SUCCESS:
-        raise Exception(
-            "Post model outputs failed, status: "
-            + post_model_outputs_response.status.description
+        raise HTTPException(
+            detail=f"Post model outputs failed, status: {post_model_outputs_response.status.description}",
+            status_code=status.HTTP_400_BAD_REQUEST,
         )
 
     output = post_model_outputs_response.outputs[0]
