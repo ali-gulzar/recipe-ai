@@ -70,6 +70,26 @@ def create_user(user: user_model.CreateUser, db: CMySQLConnection) -> user_model
     return user_model.CreatedUser(email=user.email, name=user.name)
 
 
+def delete_user(user: user_model.User, db: CMySQLConnection) -> bool:
+    # delete associated recipes
+    execute_db(
+        db=db,
+        sql_statment="DELETE FROM saved_recipes WHERE user_id = %s",
+        action=database_model.DATBASE_ACTIONS.delete,
+        paramters=(user.id,),
+    )
+
+    # delete user
+    data = execute_db(
+        db=db,
+        sql_statment="DELETE FROM users WHERE email = %s",
+        action=database_model.DATBASE_ACTIONS.delete,
+        paramters=(user.email,),
+    )
+
+    return data
+
+
 def get_user_by_email(user_email: str, db: CMySQLConnection) -> user_model.LoggedInUser:
     data = execute_db(
         db=db,

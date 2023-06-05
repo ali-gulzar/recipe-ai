@@ -39,6 +39,14 @@ def login_user(
     )
 
 
+@router.delete("/delete", response_model=bool)
+def delete_user(
+    current_user: user_model.User = Depends(authentication_service.get_current_user),
+    db: CMySQLConnection = Depends(database_service.connect_db),
+):
+    return database_service.delete_user(current_user, db)
+
+
 @router.get("/saved-recipes", response_model=List[user_model.SavedRecipe])
 def saved_recipes(
     current_user: user_model.User = Depends(authentication_service.get_current_user),
