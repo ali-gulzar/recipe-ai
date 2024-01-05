@@ -2,7 +2,7 @@ fastapi==0.108.0
 mangum==0.17.0
 python-multipart==0.0.6
 black==23.12.1
-isort==5.12.0
+isort==5.13.2
 boto3==1.34.13
 clarifai-grpc==9.11.5
 python-dotenv==1.0.0
