@@ -3,7 +3,7 @@ mangum==0.17.0
 python-multipart==0.0.9
 black==24.8.0
 isort==5.13.2
-boto3==1.35.2
+boto3==1.35.3
 clarifai-grpc==10.7.3
 python-dotenv==1.0.1
 cachetools==5.5.0
