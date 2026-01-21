@@ -9,7 +9,7 @@ python-dotenv==1.2.1
 cachetools==6.2.4
 python-jose[cryptography]==3.5.0
 passlib==1.7.4
-mysql-connector-python==9.5.0
+mysql-connector-python==9.6.0
 bcrypt==5.0.0
 pydantic[email]==2.12.5
 requests==2.32.5
