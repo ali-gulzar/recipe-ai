@@ -4,7 +4,7 @@ python-multipart==0.0.22
 black==26.1.0
 isort==8.0.1
 boto3==1.42.60
-clarifai-grpc==12.2.0
+clarifai-grpc==12.2.1
 python-dotenv==1.2.2
 cachetools==7.0.2
 python-jose[cryptography]==3.5.0
