@@ -6,7 +6,7 @@ isort==8.0.1
 boto3==1.42.92
 clarifai-grpc==12.3.1
 python-dotenv==1.2.2
-cachetools==7.0.5
+cachetools==7.0.6
 python-jose[cryptography]==3.5.0
 passlib==1.7.4
 mysql-connector-python==9.6.0
