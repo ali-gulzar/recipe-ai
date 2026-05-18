@@ -1,6 +1,6 @@
 fastapi==0.136.1
 mangum==0.21.0
-python-multipart==0.0.28
+python-multipart==0.0.29
 black==26.5.0
 isort==8.0.1
 boto3==1.43.9
