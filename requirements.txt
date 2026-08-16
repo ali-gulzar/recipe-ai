@@ -5,7 +5,7 @@ black==26.5.1
 isort==8.0.1
 boto3==1.43.72
 clarifai-grpc==12.6.0
-python-dotenv==1.2.2
+python-dotenv==1.2.3
 cachetools==7.1.7
 python-jose[cryptography]==3.5.0
 passlib==1.7.4
