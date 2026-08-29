@@ -11,5 +11,5 @@ python-jose[cryptography]==3.5.0
 passlib==1.7.4
 mysql-connector-python==26.7.0
 bcrypt==5.0.0
-pydantic[email]==2.13.4
+pydantic[email]==2.13.5
 requests==2.34.2
