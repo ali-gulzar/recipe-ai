@@ -1,4 +1,4 @@
-fastapi==0.146.0
+fastapi==0.156.4
 mangum==0.22.0
 python-multipart==0.0.32
 black==26.10.1
